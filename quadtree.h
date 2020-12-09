@@ -1,7 +1,3 @@
-//
-// Created by suro on 2020-11-13.
-//
-
 #ifndef QUADTREE_QUADTREE_H
 #define QUADTREE_QUADTREE_H
 
