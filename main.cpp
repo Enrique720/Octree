@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "quadtree.h"
+#include "octree.h"
 #include <bits/stdc++.h>
 using namespace std;
 //CImg<char> Get_Cut(p1,p2,p3,p4);
@@ -47,12 +47,20 @@ CImg<float> load_3d(){
 
 
 int main(){
-    srand(time(NULL));   
+   
+    //srand(time(NULL));   
     //A.save("in.jpg");
     //CImg<float> B = A.crop(0, 0, 3, 3); 
     //CImg<char> R = Binarizar(A,40);
-    load_3d().display();
+    CImg<float> R = load_3d();
+    R.display();
+    insert(R, 1, "data.txt");
+
+    CImg<float> RR = reconstruir(R.width(), R.height(), R.depth(), "data.txt");
+    RR.display();
     //A.display();
-    //R.display();   
+    //R.display();
+
+    
     return 0;
 }
