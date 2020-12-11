@@ -12,88 +12,92 @@
 using namespace cimg_library;
 using namespace std;
 
-struct pixel_des{
-    unsigned short xi, xf, yi, yf, zi, zf;
-    unsigned char r,g,b;
+struct point{
+    int x, y, z;    
 };
 
-bool isColorUnique(int xi, int yi, int zi, int xf, int yf, int zf, int umbral,
-    tuple<int,int,int> &rgb, CImg<float> &image){
-    int color = image(yi,xi);
-    int r = 0, g = 0, b = 0;
-    int n = (xf-xi) * (yf-yi) * (zf-zi);
+
+struct pixel_des{
+    unsigned short xi, xf, yi, yf, zi, zf;
+    int64_t children[8];
+};
+
+bool isColorUnique(int xi, int yi, int zi, int xf, int yf, int zf, int color, CImg<unsigned char> &image){
     for(int i=xi; i<xf; i++){
         for(int j=yi; j<yf; j++){
             for(int k=zi; k<zf; k++){
-                r += image(j,i,k,0);
-                g += image(j,i,k,1);
-                b += image(j,i,k,2);
+                if(color != image(j,i,k))
+                return false;
             }
         }
     }
-    r /= n, g /= n, b /= n;
-    for(int i=xi; i<xf; i++){
-        for(int j=yi; j<yf; j++){
-            for(int k=zi; k<zf; k++){
-                if(abs(image(j,i,k,0)-r) > umbral || abs(image(j,i,k,1)-g) > umbral
-                   || abs(image(j,i,k,2)-b) > umbral)
-                    return false;
-            }
-        }
-    }
-    rgb = {r,g,b};
     return true;
 }
 
-void insert(int xi, int yi, int zi, int xf, int yf, int zf, int umbral, 
-    CImg<float> &image, ofstream &output_file){
-    
-    tuple<int,int,int> rgb;
-    bool unique = isColorUnique(xi,yi,zi,xf,yf,zf,umbral,rgb,image);
+int64_t insert(int xi, int yi, int zi, int xf, int yf, int zf, CImg<unsigned char> &image, 
+    ofstream &output_file){
+    int color = image(yi,xi,zi);
+    bool unique = isColorUnique(xi,yi,zi,xf,yf,zf,color,image);
+    pixel_des pd = {xi,xf,yi,yf,zi,zf};
+    int64_t size = output_file.tellp();
     if(unique){
-        pixel_des pd = {xi,xf,yi,yf,zi,zf,get<0>(rgb),get<1>(rgb),get<2>(rgb)};
-        output_file.write((char*)&pd, sizeof(pixel_des));
+        if(color == 255){
+            output_file.write((char*)&pd, sizeof(pixel_des));
+            return size;
+        }
+        return -1;
     } else {
         int mx = (xf+xi)/2;
         int my = (yf+yi)/2;
         int mz = (zf+zi)/2;
-        if(xi!=mx && yi!=my && zi!=mz) insert(xi,yi,zi,mx,my,mz,umbral,image,output_file);
-        if(xi!=mx && yi!=my && mz!=zf) insert(xi,yi,mz,mx,my,zf,umbral,image,output_file);
-        if(xi!=mx && my!=yf && zi!=mz) insert(xi,my,zi,mx,yf,mz,umbral,image,output_file);
-        if(xi!=mx && my!=yf && mz!=zf) insert(xi,my,mz,mx,yf,zf,umbral,image,output_file);
-        if(mx!=xf && yi!=my && zi!=mz) insert(mx,yi,zi,xf,my,mz,umbral,image,output_file);
-        if(mx!=xf && yi!=my && mz!=zf) insert(mx,yi,mz,xf,my,zf,umbral,image,output_file);
-        if(mx!=xf && my!=yf && zi!=mz) insert(mx,my,zi,xf,yf,mz,umbral,image,output_file);
-        if(mx!=xf && my!=yf && mz!=zf) insert(mx,my,mz,xf,yf,zf,umbral,image,output_file);
+        if(xi!=mx && yi!=my && zi!=mz) pd.children[0] = insert(xi,yi,zi,mx,my,mz,image,output_file);
+        if(xi!=mx && yi!=my && mz!=zf) pd.children[1] = insert(xi,yi,mz,mx,my,zf,image,output_file);
+        if(xi!=mx && my!=yf && zi!=mz) pd.children[2] = insert(xi,my,zi,mx,yf,mz,image,output_file);
+        if(xi!=mx && my!=yf && mz!=zf) pd.children[3] = insert(xi,my,mz,mx,yf,zf,image,output_file);
+        if(mx!=xf && yi!=my && zi!=mz) pd.children[4] = insert(mx,yi,zi,xf,my,mz,image,output_file);
+        if(mx!=xf && yi!=my && mz!=zf) pd.children[5] = insert(mx,yi,mz,xf,my,zf,image,output_file);
+        if(mx!=xf && my!=yf && zi!=mz) pd.children[6] = insert(mx,my,zi,xf,yf,mz,image,output_file);
+        if(mx!=xf && my!=yf && mz!=zf) pd.children[7] = insert(mx,my,mz,xf,yf,zf,image,output_file);
+        output_file.write((char*)&pd, sizeof(pixel_des));
+        return size;
     }
 }
 
 
-void insert(CImg<float> &image, int umbral, string filename){
+void insert(CImg<unsigned char> &image, string filename){
     int w = image.width();
     int h = image.height();
     int d = image.depth();
     ofstream output_file(filename, ios::binary | ios::trunc);
-    insert(0,0,0,h,w,d,umbral,image,output_file);
+    insert(0,0,0,h,w,d,image,output_file);
 }
 
 
-CImg<float> reconstruir(int w, int h, int d, string filename){
+CImg<unsigned char> reconstruir(int w, int h, int d, string filename){
     ifstream input_file(filename, ios::binary);
     pixel_des pd;
-    CImg<float> R(w,h,d,3); 
+    CImg<unsigned char> R(w,h,d,1,0); 
     while(input_file.read((char*)&pd, sizeof(pixel_des))){
         for(int i=pd.xi; i<pd.xf; i++){
             for(int j=pd.yi; j<pd.yf; j++){
                 for(int k=pd.zi; k<pd.zf; k++){
-                    R(j,i,k,0) = pd.r;
-                    R(j,i,k,1) = pd.g;
-                    R(j,i,k,2) = pd.b;
+                    R(j,i,k) = 255;
                 }
             }
         }
     }
     return R;
+}
+
+void get_cut(CImg<unsigned char> &R){
+
+}
+
+CImg<unsigned char> Get_Cut(point p1, point p2, point p3, point p4, string filename){
+    ifstream input_file(filename, ios::binary);
+    // Parse points
+    CImg<unsigned char> R(w,h,1,1,0); 
+
 }
 
 

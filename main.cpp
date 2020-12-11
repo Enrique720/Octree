@@ -3,12 +3,11 @@
 #include "octree.h"
 #include <bits/stdc++.h>
 using namespace std;
-//CImg<char> Get_Cut(p1,p2,p3,p4);
 
 
-CImg<char> Binarizar(CImg<float> & img, int umbral)
+CImg<unsigned char> Binarizar(CImg<float> & img, int umbral)
 {
-    CImg<char> R(img.width(),img.height());
+    CImg<unsigned char> R(img.width(),img.height());
     for(int i=0;i< img.width();i++)
         for(int j=0;j< img.height();j++)
         {
@@ -24,20 +23,19 @@ CImg<char> Binarizar(CImg<float> & img, int umbral)
 }
 //g++ main.cpp  -L/usr/X11R6/lib -lm -lpthread -lX11
 
-CImg<float> load_3d(){
+CImg<unsigned char> load_3d(){
     int x = 512, y = 512, z = 40;
-    CImg<float> R(x,y,z,3);
+    CImg<unsigned char> R(x,y,z,1);
     ifstream db("db.txt");
     string filename;
     for(int k = 0; k < R.depth(); k++){
         getline(db,filename);
         string temp = "datos cerebros/paciente 1/1/" + filename;
-        CImg<float> img (temp.c_str());
+        CImg<float> tmp(temp.c_str());
+        CImg<unsigned char> img = Binarizar(tmp, 122);
         for(int i = 0; i < R.height(); i++){
             for(int j = 0; j < R.width(); j++){
-                R(i,j,k,0) = img(i,j,0);
-                R(i,j,k,1) = img(i,j,1);
-                R(i,j,k,2) = img(i,j,2);
+                R(i,j,k) = img(i,j);
             }
         }
     }
@@ -50,13 +48,19 @@ int main(){
     //srand(time(NULL));   
     //A.save("in.jpg");
     //CImg<float> B = A.crop(0, 0, 3, 3); 
-    //CImg<char> R = Binarizar(A,40);
-    CImg<float> R = load_3d();
+    /*CImg<float> A("datos cerebros/paciente 1/1/Paciente1CC-27-10-1988- CT from 18-01-2011 S0 I0.BMP");
+    CImg<unsigned char> R = Binarizar(A,40);
+    A.display();
     R.display();
-    insert(R, 1, "data.txt");
+    R.save("out.png");*/
+    CImg<unsigned char> R = load_3d();
+    R.display();
+    insert(R, "data.txt");
 
-    CImg<float> RR = reconstruir(R.width(), R.height(), R.depth(), "data.txt");
-    RR.display();
+    /*CImg<unsigned char> RR = reconstruir(R.width(), R.height(), R.depth(), "data.txt");
+    RR.display();*/
+
+    
     //A.display();
     //R.display();
 
