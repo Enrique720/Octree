@@ -5,8 +5,7 @@
 using namespace std;
 
 
-CImg<unsigned char> Binarizar(CImg<float> & img, int umbral)
-{
+CImg<unsigned char> Binarizar(CImg<float> & img, int umbral) {
     CImg<unsigned char> R(img.width(),img.height());
     for(int i=0;i< img.width();i++)
         for(int j=0;j< img.height();j++)
