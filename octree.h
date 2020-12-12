@@ -4,101 +4,106 @@
 
 #ifndef QUADTREE_QUADTREE_H
 #define QUADTREE_QUADTREE_H
-
-#include "CImg.h"
-#include <fstream>
-#include <tuple>
-
+#define INF 10000000
+#include "functions.h"
 using namespace cimg_library;
-using namespace std;
-
-struct point{
-    int x, y, z;    
+struct plano{
+    double a, b,c,d;
 };
 
+double getX(plano input,point point){
+    if(input.a==0)return INF;
+    return -(input.b*point.y+input.c*point.z+input.d)/input.a;
+}
 
-struct pixel_des{
-    unsigned short xi, xf, yi, yf, zi, zf;
-    int64_t children[8];
-};
+double getY(plano input,point point){
+    if( input.b==0)return INF;
+    return -(input.a*point.x+input.c*point.z+input.d)/input.b;
+}
+double getZ(plano input,point point){
+    if(input.c==0)return INF;
+    return -(input.b*point.y+input.a*point.x+input.d)/input.c;
+}
 
-bool isColorUnique(int xi, int yi, int zi, int xf, int yf, int zf, int color, CImg<unsigned char> &image){
-    for(int i=xi; i<xf; i++){
-        for(int j=yi; j<yf; j++){
-            for(int k=zi; k<zf; k++){
-                if(color != image(j,i,k))
-                return false;
+bool intersect(plano input, pixel_des quad){
+    point initial = {quad.xi,quad.yi,quad.zi};
+    point end = {quad.xf,quad.yf,quad.zf};
+    if( (input.c==0 || (getZ(input,initial)>=quad.zi) && (getZ(input,end)<=quad.zf) || 
+        (getZ(input,initial)<=quad.zf) && (getZ(input,end)>=quad.zi) ) &&
+        ( input.b==0|| (getY(input,initial)>=quad.yi) && (getY(input,end)<=quad.yf) || 
+        (getY(input,initial)<=quad.yf) && (getY(input,end)>=quad.yi) ) &&
+        (input.a==0|| (getX(input,initial)>=quad.xi) && (getX(input,end)<=quad.xf) || 
+        (getX(input,initial)<=quad.xf) && (getX(input,end)>=quad.xi))  ) 
+    {
+        return true;
+    }
+    return false;
+}
+
+/*bool intersectFB(plano &input, pixel_des &quad){
+    for(int i = quad.xi; i < quad.xf; i++){
+        for(int j = quad.ji ; j < quad.jf; j++){
+            for(int k = quad.ki; k < quad.kf; k++){
+                if(input.a*i + input.b*j + input.c*z + d == 0)
+                    return true;
             }
         }
     }
-    return true;
-}
+    return false;
+}*/
 
-int64_t insert(int xi, int yi, int zi, int xf, int yf, int zf, CImg<unsigned char> &image, 
-    ofstream &output_file){
-    int color = image(yi,xi,zi);
-    bool unique = isColorUnique(xi,yi,zi,xf,yf,zf,color,image);
-    pixel_des pd = {xi,xf,yi,yf,zi,zf};
-    int64_t size = output_file.tellp();
-    if(unique){
-        if(color == 255){
-            output_file.write((char*)&pd, sizeof(pixel_des));
-            return size;
-        }
-        return -1;
-    } else {
-        int mx = (xf+xi)/2;
-        int my = (yf+yi)/2;
-        int mz = (zf+zi)/2;
-        if(xi!=mx && yi!=my && zi!=mz) pd.children[0] = insert(xi,yi,zi,mx,my,mz,image,output_file);
-        if(xi!=mx && yi!=my && mz!=zf) pd.children[1] = insert(xi,yi,mz,mx,my,zf,image,output_file);
-        if(xi!=mx && my!=yf && zi!=mz) pd.children[2] = insert(xi,my,zi,mx,yf,mz,image,output_file);
-        if(xi!=mx && my!=yf && mz!=zf) pd.children[3] = insert(xi,my,mz,mx,yf,zf,image,output_file);
-        if(mx!=xf && yi!=my && zi!=mz) pd.children[4] = insert(mx,yi,zi,xf,my,mz,image,output_file);
-        if(mx!=xf && yi!=my && mz!=zf) pd.children[5] = insert(mx,yi,mz,xf,my,zf,image,output_file);
-        if(mx!=xf && my!=yf && zi!=mz) pd.children[6] = insert(mx,my,zi,xf,yf,mz,image,output_file);
-        if(mx!=xf && my!=yf && mz!=zf) pd.children[7] = insert(mx,my,mz,xf,yf,zf,image,output_file);
-        output_file.write((char*)&pd, sizeof(pixel_des));
-        return size;
+
+
+class Octree{
+    pixel_des root;
+    string filename;
+    CImg <unsigned char> R;
+    CImg <unsigned char> FinalImg;
+public:
+    Octree(string _filename): filename{_filename} {
+        //readRoot
+        ifstream file(filename);
+        file.seekg(0,ios::end);
+        int amount =file.tellg()/sizeof(pixel_des);
+        file.seekg((amount-1)*sizeof(pixel_des));
+        file.read((char*)&root,sizeof(pixel_des));
     }
-}
-
-
-void insert(CImg<unsigned char> &image, string filename){
-    int w = image.width();
-    int h = image.height();
-    int d = image.depth();
-    ofstream output_file(filename, ios::binary | ios::trunc);
-    insert(0,0,0,h,w,d,image,output_file);
-}
-
-
-CImg<unsigned char> reconstruir(int w, int h, int d, string filename){
-    ifstream input_file(filename, ios::binary);
-    pixel_des pd;
-    CImg<unsigned char> R(w,h,d,1,0); 
-    while(input_file.read((char*)&pd, sizeof(pixel_des))){
-        for(int i=pd.xi; i<pd.xf; i++){
-            for(int j=pd.yi; j<pd.yf; j++){
-                for(int k=pd.zi; k<pd.zf; k++){
-                    R(j,i,k) = 255;
+    
+    void get_cut(plano &input,uint64_t pos){   
+        // load nodo
+        pixel_des temp;
+        ifstream file(filename);
+        file.seekg(pos);
+        file.read((char*)&temp,sizeof(pixel_des));
+        if(intersect(input, temp)){
+            if(temp.isLeaf){
+                /*for(){
+                    for(){
+                        for(){
+                            
+                        }
+                    }
+                }*/
+            }else{
+                for(int i=0;i<8;i++){
+                    if(temp.children[i]!=-1){
+                        get_cut(input,temp.children[i]);
+                    }
                 }
             }
         }
+        
     }
-    return R;
-}
+//a,b,c,d 
 
-void get_cut(CImg<unsigned char> &R){
+    /*CImg<unsigned char> Get_Cut(point p1, point p2, point p3, point p4, string filename){
+        ifstream input_file(filename, ios::binary);
+        // Parse points
+        CImg<unsigned char> R(w,h,1,1,0);
+    }*/
 
-}
+};
 
-CImg<unsigned char> Get_Cut(point p1, point p2, point p3, point p4, string filename){
-    ifstream input_file(filename, ios::binary);
-    // Parse points
-    CImg<unsigned char> R(w,h,1,1,0); 
-
-}
 
 
 #endif //QUADTREE_QUADTREE_H
