@@ -7,6 +7,7 @@
 #define INF 10000000
 #include "functions.h"
 using namespace cimg_library;
+
 struct plano{
     double a, b,c,d;
 };
@@ -40,6 +41,22 @@ bool intersect(plano input, pixel_des quad){
     return false;
 }
 
+plano getPlano(point p, double angle1, double angle2){
+    plane pl;
+    pl.a = p.x + cos(angle1) * -cos(angle2);
+    pl.b = p.y + sin(angle1) * -cos(angle2);
+    pl.c = p.z + sin(angle2);
+
+    point n;
+    n.x = pl.a - p.x;
+    n.y = pl.b - p.y;
+    n.z = pl.c - p.z;
+
+    pl.d = n.x*p.x + n.y*p.y + n.z*p.z;
+
+    return pl;
+}
+
 /*bool intersectFB(plano &input, pixel_des &quad){
     for(int i = quad.xi; i < quad.xf; i++){
         for(int j = quad.ji ; j < quad.jf; j++){
@@ -53,13 +70,13 @@ bool intersect(plano input, pixel_des quad){
 }*/
 
 
-
 class Octree{
     pixel_des root;
     string filename;
     CImg <unsigned char> R;
     CImg <unsigned char> FinalImg;
 public:
+
     Octree(string _filename): filename{_filename} {
         //readRoot
         ifstream file(filename);
@@ -67,6 +84,16 @@ public:
         int amount =file.tellg()/sizeof(pixel_des);
         file.seekg((amount-1)*sizeof(pixel_des));
         file.read((char*)&root,sizeof(pixel_des));
+    }
+
+    void fill(pixel_des pd){
+        for(int i=pd.xi; i<pd.xf; i++){
+            for(int j=pd.yi; j<pd.yf; j++){
+                for(int k=pd.zi; k<pd.zf; k++){
+                    R(j,i,k) = 255;
+                }
+            }
+        }
     }
     
     void get_cut(plano &input,uint64_t pos){   
@@ -77,13 +104,7 @@ public:
         file.read((char*)&temp,sizeof(pixel_des));
         if(intersect(input, temp)){
             if(temp.isLeaf){
-                /*for(){
-                    for(){
-                        for(){
-                            
-                        }
-                    }
-                }*/
+                fill(temp);
             }else{
                 for(int i=0;i<8;i++){
                     if(temp.children[i]!=-1){
