@@ -8,11 +8,11 @@ using namespace cimg_library;
 using namespace std;
 
 struct point{
-    int x, y, z;    
+    double x, y, z;    
 };
 
 struct pixel_des{
-    unsigned short xi, xf, yi, yf, zi, zf;
+    double xi, xf, yi, yf, zi, zf;
     bool isLeaf;
     int64_t children[8];
 };
