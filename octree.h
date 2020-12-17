@@ -5,6 +5,7 @@
 #ifndef QUADTREE_QUADTREE_H
 #define QUADTREE_QUADTREE_H
 #define INF 10000000
+#define PI 3.14159265
 #include "functions.h"
 using namespace cimg_library;
 
@@ -41,18 +42,18 @@ bool intersect(plano input, pixel_des quad){
     return false;
 }
 
-plano getPlano(point p, double angle1, double angle2){
-    plane pl;
-    pl.a = p.x + cos(angle1) * -cos(angle2);
-    pl.b = p.y + sin(angle1) * -cos(angle2);
-    pl.c = p.z + sin(angle2);
+plano getPlano(point p1, point p2, point p3){
+    plano pl;
 
-    point n;
-    n.x = pl.a - p.x;
-    n.y = pl.b - p.y;
-    n.z = pl.c - p.z;
+    point v1 = p2 - p1;
+    point v2 = p3 - p1;
+    point cross = v1 * v2;
+    point norm = cross.norm();
 
-    pl.d = n.x*p.x + n.y*p.y + n.z*p.z;
+    pl.a = norm.x;
+    pl.b = norm.y;
+    pl.c = norm.z;
+    pl.d = -(norm.x*p1.x + norm.y*p1.y + norm.z*p1.z);
 
     return pl;
 }
@@ -73,42 +74,45 @@ plano getPlano(point p, double angle1, double angle2){
 class Octree{
     pixel_des root;
     string filename;
+    ifstream file;
     CImg <unsigned char> R;
     CImg <unsigned char> FinalImg;
 public:
 
-    Octree(string _filename): filename{_filename} {
+    Octree(string _filename): filename(_filename) {
         //readRoot
-        ifstream file(filename);
+        file.open(filename);
         file.seekg(0,ios::end);
         int amount =file.tellg()/sizeof(pixel_des);
         file.seekg((amount-1)*sizeof(pixel_des));
         file.read((char*)&root,sizeof(pixel_des));
     }
 
-    void fill(pixel_des pd){
-        for(int i=pd.xi; i<pd.xf; i++){
-            for(int j=pd.yi; j<pd.yf; j++){
-                for(int k=pd.zi; k<pd.zf; k++){
-                    R(j,i,k) = 255;
-                }
+    void fill(pixel_des pd, CImg<unsigned char> &ans){
+        for(int j=pd.yi; j<pd.yf; j++){
+            for(int k=pd.zi; k<pd.zf; k++){
+                ans(j,k) = 255;
             }
         }
     }
     
-    void get_cut(plano &input,uint64_t pos){   
+    void get_cut(plano &input, uint64_t pos, CImg<unsigned char> &ans){   
         // load nodo
         pixel_des temp;
-        ifstream file(filename);
+        // ifstream file(filename);
         file.seekg(pos);
         file.read((char*)&temp,sizeof(pixel_des));
+        //cout << "Punto inicial: " << temp.xi << ' ' << temp.yi << ' ' << temp.zi << '\n';
+        //cout << "Punto final: " << temp.xf << ' ' << temp.yf << ' ' << temp.zf << '\n';
         if(intersect(input, temp)){
+            //cout << "Leaf: " << temp.isLeaf << '\n';
             if(temp.isLeaf){
-                fill(temp);
+                fill(temp, ans);
             }else{
                 for(int i=0;i<8;i++){
+                    //cout << "children " << i << ": " << i << '\n';
                     if(temp.children[i]!=-1){
-                        get_cut(input,temp.children[i]);
+                        get_cut(input, temp.children[i], ans);
                     }
                 }
             }
@@ -116,11 +120,26 @@ public:
     }
 //a,b,c,d 
 
-    /*CImg<unsigned char> Get_Cut(point p1, point p2, point p3, point p4, string filename){
-        ifstream input_file(filename, ios::binary);
-        // Parse points
-        CImg<unsigned char> R(w,h,1,1,0);
-    }*/
+    CImg<unsigned char> Get_Cut(double w, double h, double d, double angle1, double angle2){
+        point p1 = {w/2, h/2, d/2};
+        point p2 = {w/2 + cos(PI + angle1), h/2, d/2 + sin(PI + angle1)};
+        point p3 = {w/2, h/2 + cos(PI + angle2), d/2 + sin(PI + angle2)};
+
+        plano pl = getPlano(p1, p2, p3);
+
+        int wf = 512; //ceil(w*1.0/cos(angle2));
+        int df = 512; //ceil(d*1.0/sin(angle1));
+
+        //cout << wf << ' ' << df << '\n';
+
+        CImg<unsigned char> ans(wf,df,1,1,0);
+
+        file.seekg(0,ios::end);
+        int pos = int(file.tellg()) - int(sizeof(pixel_des));
+        get_cut(pl, pos, ans);
+
+        return ans;
+    }
 
 };
 

@@ -8,16 +8,50 @@ using namespace cimg_library;
 using namespace std;
 
 struct point{
-    double x, y, z;    
+    double x, y, z;
+
+    point operator+(const point &pd){
+        point res;
+        res.x = x + pd.x;
+        res.y = y + pd.y;
+        res.z = z + pd.z;
+        return res;
+    }
+
+    point operator-(const point &pd){
+        point res;
+        res.x = x - pd.x;
+        res.y = y - pd.y;
+        res.z = z - pd.z;
+        return res;
+    }
+
+    point operator*(const point &pd){
+        point res;
+        res.x = y*pd.z - z*pd.y;
+        res.y = z*pd.x - x*pd.z;
+        res.z = x*pd.y - y*pd.x;
+        return res;
+    }
+
+    point norm(){
+        point res;
+        double div = sqrt(x*x + y*y + z*z);
+        res.x = x/div;
+        res.y = y/div;
+        res.z = z/div;
+        return res;
+    }
 };
 
 struct pixel_des{
     double xi, xf, yi, yf, zi, zf;
     bool isLeaf;
-    int64_t children[8];
+    int64_t children[8] = {-1,-1,-1,-1,-1,-1,-1,-1};
 };
 
-bool isColorUnique(int xi, int yi, int zi, int xf, int yf, int zf, int color, CImg<unsigned char> &image){
+bool isColorUnique(double xi, double yi, double zi, double xf, double yf, double zf,
+                    int color, CImg<unsigned char> &image){
     for(int i=xi; i<xf; i++){
         for(int j=yi; j<yf; j++){
             for(int k=zi; k<zf; k++){
@@ -29,19 +63,19 @@ bool isColorUnique(int xi, int yi, int zi, int xf, int yf, int zf, int color, CI
     return true;
 }
 
-int64_t insert(int xi, int yi, int zi, int xf, int yf, int zf, CImg<unsigned char> &image, 
-    ofstream &output_file){
+int64_t insert(double xi, double yi, double zi, double xf, double yf, double zf, 
+                CImg<unsigned char> &image, ofstream &output_file){
     int color = image(yi,xi,zi);
     bool unique = isColorUnique(xi,yi,zi,xf,yf,zf,color,image);
     pixel_des pd = {xi,xf,yi,yf,zi,zf,false};
-    int64_t size = output_file.tellp();
     if(unique){
         if(color == 255){
+            output_file.seekp(0,ios::end);
+            int64_t size = output_file.tellp();
             pd.isLeaf = true;
             output_file.write((char*)&pd, sizeof(pixel_des));
             return size;
         }
-        return -1;
     } else {
         int mx = (xf+xi)/2;
         int my = (yf+yi)/2;
@@ -54,9 +88,12 @@ int64_t insert(int xi, int yi, int zi, int xf, int yf, int zf, CImg<unsigned cha
         if(mx!=xf && yi!=my && mz!=zf) pd.children[5] = insert(mx,yi,mz,xf,my,zf,image,output_file);
         if(mx!=xf && my!=yf && zi!=mz) pd.children[6] = insert(mx,my,zi,xf,yf,mz,image,output_file);
         if(mx!=xf && my!=yf && mz!=zf) pd.children[7] = insert(mx,my,mz,xf,yf,zf,image,output_file);
+        output_file.seekp(0,ios::end);
+        int64_t size = output_file.tellp();
         output_file.write((char*)&pd, sizeof(pixel_des));
         return size;
     }
+    return -1;
 }
 
 void insert(CImg<unsigned char> &image, string filename){
