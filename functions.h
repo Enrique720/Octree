@@ -51,6 +51,31 @@ struct point{
         }
         return res;
     }
+
+    double dist(point b){
+        double res=0;
+        for(int i=0;i<3;i++){
+            res+=abs((b.coor[i]-coor[i])*(b.coor[i]-coor[i]));
+        }
+        return sqrt(res);
+    }
+
+    point operator/(double b){
+        point res;
+        for(int i=0;i<3;i++){
+            res.coor[i] = coor[i]/b;
+        }
+        return res;
+    }
+
+    point dot(double b){
+        point res;
+        for(int i=0;i<3;i++){
+            res.coor[i] = coor[i]*b;
+        }
+        return res;
+    }
+
 };
 
 struct pixel_des{

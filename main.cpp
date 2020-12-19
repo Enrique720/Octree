@@ -53,11 +53,11 @@ int main(){
     R.display();
     R.save("out.png");*/
     CImg<unsigned char> R = load_3d();
-    R.display();
+    //R.display();
     //insert(R, "data.txt");
 
     Octree oct("data.txt");
-    CImg<unsigned char> RR = oct.Get_Cut(R.width(), R.height(), R.depth(), PI/2, 0);    
+    CImg<unsigned char> RR = oct.Get_Cut(R.width(), R.height(), R.depth(), PI/4+0.5, PI/4+0.3);    
     RR.display();
 
     /*CImg<unsigned char> RR = reconstruir(R.width(), R.height(), R.depth(), "data.txt");

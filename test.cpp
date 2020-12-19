@@ -1,7 +1,7 @@
 #include "octree.h"
 int main(){
     pixel_des temp = {{0, 0, 0}, {3, 3, 3}};
-    plano input = {1.55,2.25,0.5,-2};
+    plano input = {1,0,1,-2};
     if(intersect(input,temp)){
         cout<<"nice"<<endl;
     }else{

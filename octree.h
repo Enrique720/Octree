@@ -148,15 +148,52 @@ public:
         file.read((char*)&root,sizeof(pixel_des));
     }
 
-    void fill(pixel_des pd, CImg<unsigned char> &ans){
-        /*for(int j=pd.pi.pi.coor[1]; j<pd.pf.coor[1]; j++){
-            for(int k=pd.pi.coor[2]; k<pd.pf.coor[2]; k++){
-                ans(j,k) = 255;
+    void fill(CImg<unsigned char> &ans,vector<point>points,int reflect){  
+        cout<<"------------------"<<endl;
+        for( auto it: points){
+            cout<<it.coor[0]<<" "<<it.coor[1]<<" "<<it.coor[2]<<" "<<endl;
+        }
+        if(points.size()!=4)return;
+        cout<<"hola"<<endl;
+        double distX = abs(points[0].coor[0]-points[2].coor[0]);
+        cout<<"DISTX"<<distX<<endl;
+        double distY = abs(points[2].coor[1]-points[0].coor[1]);        
+        cout<<"DISTY"<<distY<<endl;
+        double distZ = abs(points[1].coor[2]-points[0].coor[2]);   
+        cout<<"DISTZ"<<distZ<<endl;
+     
+        switch(reflect){
+            case 0: {  //XY
+                for(int i=0;i<distX;i++){
+                    for(int j=0;j<distY;j++){
+                        ans(points[0].coor[1]+j,points[1].coor[0]+i)=255; 
+                        //ans(j,i) = R(temp.coor[0],temp.coor[1],temp.coor[2]);
+                    }
+                }                               
+            };
+            case 1:{   //YZ
+                cout<<"llego1"<<endl;
+                for(int i=0;i<distY;i++){
+                    for(int j=0;j<distZ;j++){
+
+                        ans(points[0].coor[1]+i,points[0].coor[2]+j)=255; 
+                        //ans(j,i) = R(temp.coor[0],temp.coor[1],temp.coor[2]);
+                    }
+                }
+            };
+            case 2:{   //XZ 
+                for(int i=0;i<distX;i++){
+                    for(int j=0;j<distZ;j++){
+                        ans(points[0].coor[2]+j,points[1].coor[0]+i)=255; 
+                        //ans(j,i) = R(temp.coor[0],temp.coor[1],temp.coor[2]);
+                    }
+                }
             }
-        }*/
+        }
+        
     }
     
-    void get_cut(plano &input, uint64_t pos, CImg<unsigned char> &ans){   
+    void get_cut(plano &input, uint64_t pos, CImg<unsigned char> &ans,int &reflect){   
         // load nodo
         pixel_des temp;
         // ifstream file(filename);
@@ -167,12 +204,13 @@ public:
         if(intersect(input, temp)){
             //cout << "Leaf: " << temp.isLeaf << '\n';
             if(temp.isLeaf){
-                fill(temp, ans);
+                auto pts = getPoints({temp.pi,temp.pf},input);
+                fill(ans,pts,reflect);
             }else{
                 for(int i=0;i<8;i++){
                     //cout << "children " << i << ": " << i << '\n';
                     if(temp.children[i]!=-1){
-                        get_cut(input, temp.children[i], ans);
+                        get_cut(input, temp.children[i], ans,reflect);
                     }
                 }
             }
@@ -186,6 +224,7 @@ public:
         point p3 = {w/2, h/2 + cos(PI + angle2), d/2 + sin(PI + angle2)};
 
         plano pl = getPlano(p1, p2, p3);
+        cout<<pl.a<<" "<<pl.b<<" "<<pl.c<<" "<<pl.d<<endl;
 
         auto pts = getPoints({{0,0,0},{h,w,d}},pl);
         sort(pts.begin(), pts.end());
@@ -193,22 +232,48 @@ public:
         for(point pt:pts){
             cout << "Punto:";
             for(int i=0; i<3; i++)
-                cout << ' ' << pt.coor[i];
+                cout << ' ' << pt.coor[i];  
             cout << '\n';
         }
+        
+        int reflect=1;
+        if(angle1<=PI/4 && angle2<=PI/4 ){
+            reflect=0;
+        }else if(angle1>PI/4 && angle2< PI/4) {
+            reflect=1; 
+        }else if(angle1<PI/4 && angle2>PI/4) {
+            reflect=2;
+        }else if(angle1>angle2){
+            reflect=1;
+        }else{
+            reflect=2;
+        }
+        cout<<"REFLECT IS: "<<reflect<<endl;        
+        int wf,df;
+        switch (reflect){
+            case 0:{
+                
+            };
+            case 1: {
+                
+            };
+            case 2: {
+                
+            }
+        }
+        //int wf = pts[2].coor[1]-pts[1].coor[1]; //ceil(w*1.0/cos(angle2));
+        //int df = pts[1].coor[2]- pts[0].coor[2]; //ceil(d*1.0/sin(angle1));
 
-        int wf = 512; //ceil(w*1.0/cos(angle2));
-        int df = 40; //ceil(d*1.0/sin(angle1));
+        cout << wf << ' ' << df << '\n';
 
-        //cout << wf << ' ' << df << '\n';
+        CImg<unsigned char> ans(wf,df,1,1,0);
 
-        /*CImg<unsigned char> ans(wf,df,1,1,0);
 
         file.seekg(0,ios::end);
         int pos = int(file.tellg()) - int(sizeof(pixel_des));
-        get_cut(pl, pos, ans);
+        //get_cut(pl, pos, ans,reflect);
 
-        return ans;*/
+        return ans;
     }
 
 };
