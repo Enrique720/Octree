@@ -205,6 +205,10 @@ public:
             //cout << "Leaf: " << temp.isLeaf << '\n';
             if(temp.isLeaf){
                 auto pts = getPoints({temp.pi,temp.pf},input);
+                if(pts.size()==6){
+                    pts.erase(pts.begin()+2);
+                    pts.erase(pts.begin()+2);
+                }
                 fill(ans,pts,reflect);
             }else{
                 for(int i=0;i<8;i++){
@@ -222,26 +226,36 @@ public:
         point p1 = {w/2, h/2, d/2};
         point p2 = {w/2 + cos(PI + angle1), h/2, d/2 + sin(PI + angle1)};
         point p3 = {w/2, h/2 + cos(PI + angle2), d/2 + sin(PI + angle2)};
+        cout<<p1.coor[0]<<" "<<p1.coor[1]<<" "<<p1.coor[2]<<endl; 
+        cout<<p2.coor[0]<<" "<<p2.coor[1]<<" "<<p2.coor[2]<<endl; 
+        cout<<p3.coor[0]<<" "<<p3.coor[1]<<" "<<p3.coor[2]<<endl; 
+
 
         plano pl = getPlano(p1, p2, p3);
         cout<<pl.a<<" "<<pl.b<<" "<<pl.c<<" "<<pl.d<<endl;
 
         auto pts = getPoints({{0,0,0},{h,w,d}},pl);
         sort(pts.begin(), pts.end());
-
+        if(pts.size()==6){
+            pts.erase(pts.begin()+2);
+            pts.erase(pts.begin()+2);
+            
+        }
         for(point pt:pts){
             cout << "Punto:";
             for(int i=0; i<3; i++)
                 cout << ' ' << pt.coor[i];  
             cout << '\n';
         }
-        
+        double umbral = d/w *PI/4;
+        cout<<"umbral: "<<umbral<<endl; 
+        cout<<"angle1: "<<angle1<<endl;
         int reflect=1;
-        if(angle1<=PI/4 && angle2<=PI/4 ){
+        if(angle1<=umbral && angle2<=umbral ){
             reflect=0;
-        }else if(angle1>PI/4 && angle2< PI/4) {
+        }else if(angle1>umbral && angle2< umbral) {
             reflect=1; 
-        }else if(angle1<PI/4 && angle2>PI/4) {
+        }else if(angle1<umbral && angle2>umbral) {
             reflect=2;
         }else if(angle1>angle2){
             reflect=1;
@@ -252,13 +266,17 @@ public:
         int wf,df;
         switch (reflect){
             case 0:{
-                
+                break;
             };
             case 1: {
-                
+                wf = abs(pts[2].coor[1] - pts[1].coor[1]);
+                df = abs(pts[1].coor[2] - pts[0].coor[2]);
+                break;
             };
             case 2: {
-                
+                wf = abs(pts[2].coor[0] - pts[1].coor[0]);     // TODO  
+                df = abs(pts[2].coor[2] - pts[1].coor[2]); 
+                break;
             }
         }
         //int wf = pts[2].coor[1]-pts[1].coor[1]; //ceil(w*1.0/cos(angle2));
@@ -272,7 +290,7 @@ public:
         file.seekg(0,ios::end);
         int pos = int(file.tellg()) - int(sizeof(pixel_des));
         //get_cut(pl, pos, ans,reflect);
-
+        cout<<"reflect is: "<<reflect<<endl; 
         return ans;
     }
 

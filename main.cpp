@@ -57,7 +57,7 @@ int main(){
     //insert(R, "data.txt");
 
     Octree oct("data.txt");
-    CImg<unsigned char> RR = oct.Get_Cut(R.width(), R.height(), R.depth(), PI/4+0.5, PI/4+0.3);    
+    CImg<unsigned char> RR = oct.Get_Cut(R.width(), R.height(), R.depth(),  0.06,0.06);         
     RR.display();
 
     /*CImg<unsigned char> RR = reconstruir(R.width(), R.height(), R.depth(), "data.txt");
