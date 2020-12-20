@@ -154,40 +154,57 @@ public:
             cout<<it.coor[0]<<" "<<it.coor[1]<<" "<<it.coor[2]<<" "<<endl;
         }
         if(points.size()!=4)return;
+        int distXmin,distZmin,distYmin;
+        distXmin=distZmin=distYmin=1000;
+        int distXmax=0,distYmax=0,distZmax=0;
+        for(auto it:points){
+            distXmin=min(distXmin,int(it.coor[0]));
+            distYmin=min(distYmin,int(it.coor[1]));
+            distZmin=min(distZmin,int( it.coor[2]));
+            distXmax = max(distXmax,int(it.coor[0]));
+            distYmax = max(distYmax,int(it.coor[1]));
+            distZmax = max(distZmax,int(it.coor[2]));
+        }
+        cout<<distXmin<<" "<<distYmin<<" "<<distZmin<<endl;
+
+        
         cout<<"hola"<<endl;
-        double distX = abs(points[0].coor[0]-points[2].coor[0]);
+        int distX = (abs(distXmax-distXmin));
         cout<<"DISTX"<<distX<<endl;
-        double distY = abs(points[2].coor[1]-points[0].coor[1]);        
+        int distY = (abs(distYmax-distYmin));        
         cout<<"DISTY"<<distY<<endl;
-        double distZ = abs(points[1].coor[2]-points[0].coor[2]);   
+        int distZ = (abs(distZmax-distZmin));   
         cout<<"DISTZ"<<distZ<<endl;
      
         switch(reflect){
             case 0: {  //XY
                 for(int i=0;i<distX;i++){
                     for(int j=0;j<distY;j++){
-                        ans(points[0].coor[1]+j,points[1].coor[0]+i)=255; 
+                        cout<<"nani"<<endl;
+                        ans(distYmin+j,distXmin+i)=255; 
                         //ans(j,i) = R(temp.coor[0],temp.coor[1],temp.coor[2]);
                     }
-                }                               
+                }    
+                break;                           
             };
             case 1:{   //YZ
                 cout<<"llego1"<<endl;
                 for(int i=0;i<distY;i++){
-                    for(int j=0;j<distZ;j++){
-
-                        ans(points[0].coor[1]+i,points[0].coor[2]+j)=255; 
+                    for(int j=0;j<min(distZ,39-distZmin);j++){
+                        ans(distYmin+i,distZmin+j)=255; 
                         //ans(j,i) = R(temp.coor[0],temp.coor[1],temp.coor[2]);
                     }
                 }
+                break; 
             };
             case 2:{   //XZ 
                 for(int i=0;i<distX;i++){
-                    for(int j=0;j<distZ;j++){
-                        ans(points[0].coor[2]+j,points[1].coor[0]+i)=255; 
+                    for(int j=0;j<min(distZ,39-distZmin);j++){
+                        ans(distXmin+i,distZmin+j )=255; 
                         //ans(j,i) = R(temp.coor[0],temp.coor[1],temp.coor[2]);
                     }
                 }
+                break; 
             }
         }
         
@@ -235,12 +252,12 @@ public:
         cout<<pl.a<<" "<<pl.b<<" "<<pl.c<<" "<<pl.d<<endl;
 
         auto pts = getPoints({{0,0,0},{h,w,d}},pl);
-        sort(pts.begin(), pts.end());
-        if(pts.size()==6){
+        //sort(pts.begin(), pts.end());
+        /*if(pts.size()==6){
             pts.erase(pts.begin()+2);
             pts.erase(pts.begin()+2);
             
-        }
+        }*/
         for(point pt:pts){
             cout << "Punto:";
             for(int i=0; i<3; i++)
@@ -263,19 +280,46 @@ public:
             reflect=2;
         }
         cout<<"REFLECT IS: "<<reflect<<endl;        
-        int wf,df;
+        int wf=1000,df=1000,wfmax=0,dfmax=0;
         switch (reflect){
             case 0:{
+                cout<<"----"<<endl;
+                for(auto it:pts){
+                    cout<<it.coor[1]<<endl; 
+                    if (wf>it.coor[0])wf=it.coor[0];
+                    if (wfmax<it.coor[0])wfmax =it.coor[0];
+                    if (df>it.coor[1])df=it.coor[1];
+                    if (dfmax<it.coor[1])dfmax=it.coor[1];
+                }
+                cout<<wf<<" "<<wfmax<<" "<<df<< " "<<dfmax<<endl;
+                wf = wfmax-wf;
+                df = dfmax-df;
                 break;
             };
             case 1: {
-                wf = abs(pts[2].coor[1] - pts[1].coor[1]);
-                df = abs(pts[1].coor[2] - pts[0].coor[2]);
+                for(auto it:pts){
+                    if (wf>it.coor[1])wf=it.coor[1];
+                    if (wfmax<it.coor[1])wfmax =it.coor[1];
+                    if (df>it.coor[2])df=it.coor[2];
+                    if (dfmax<it.coor[2])dfmax=it.coor[2];
+                }
+                wf = wfmax-wf;
+                df = dfmax-df;
+                //wf = abs(pts[2].coor[1] - pts[1].coor[1]);
+                //df = abs(pts[1].coor[2] - pts[0].coor[2]);
                 break;
             };
             case 2: {
-                wf = abs(pts[2].coor[0] - pts[1].coor[0]);     // TODO  
-                df = abs(pts[2].coor[2] - pts[1].coor[2]); 
+                for(auto it:pts){
+                    if (wf>it.coor[0])wf=it.coor[0];
+                    if (wfmax<it.coor[0])wfmax =it.coor[0];
+                    if (df>it.coor[2])df=it.coor[2];
+                    if (dfmax<it.coor[2])dfmax=it.coor[2];
+                }
+                wf = wfmax-wf;
+                df = dfmax-df;
+                //wf = abs(pts[2].coor[0] - pts[1].coor[0]);     // TODO  
+                //df = abs(pts[2].coor[2] - pts[1].coor[2]); 
                 break;
             }
         }
@@ -289,7 +333,7 @@ public:
 
         file.seekg(0,ios::end);
         int pos = int(file.tellg()) - int(sizeof(pixel_des));
-        //get_cut(pl, pos, ans,reflect);
+        get_cut(pl, pos, ans,reflect);
         cout<<"reflect is: "<<reflect<<endl; 
         return ans;
     }
