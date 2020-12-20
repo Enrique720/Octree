@@ -230,30 +230,10 @@ public:
         point p1 = {w/2, h/2, d/2};
         point p2 = {w/2 + cos(PI + angle1), h/2, d/2 + sin(PI + angle1)};
         point p3 = {w/2, h/2 + cos(PI + angle2), d/2 + sin(PI + angle2)};
-        cout<<p1.coor[0]<<" "<<p1.coor[1]<<" "<<p1.coor[2]<<endl; 
-        cout<<p2.coor[0]<<" "<<p2.coor[1]<<" "<<p2.coor[2]<<endl; 
-        cout<<p3.coor[0]<<" "<<p3.coor[1]<<" "<<p3.coor[2]<<endl; 
-
-
         plano pl = getPlano(p1, p2, p3);
-        cout<<pl.a<<" "<<pl.b<<" "<<pl.c<<" "<<pl.d<<endl;
 
         auto pts = getPoints({{0,0,0},{h,w,d}},pl);
-        //sort(pts.begin(), pts.end());
-        /*if(pts.size()==6){
-            pts.erase(pts.begin()+2);
-            pts.erase(pts.begin()+2);
-            
-        }*/
-        for(point pt:pts){
-            cout << "Punto:";
-            for(int i=0; i<3; i++)
-                cout << ' ' << pt.coor[i];  
-            cout << '\n';
-        }
         double umbral = d/w *PI/4;
-        cout<<"umbral: "<<umbral<<endl; 
-        cout<<"angle1: "<<angle1<<endl;
         int reflect=1;
         if(angle1<=umbral && angle2<=umbral ){
             reflect=0;
@@ -266,19 +246,15 @@ public:
         }else{
             reflect=2;
         }
-        cout<<"REFLECT IS: "<<reflect<<endl;        
         int wf=1000,df=1000,wfmax=0,dfmax=0;
         switch (reflect){
             case 0:{
-                cout<<"----"<<endl;
                 for(auto it:pts){
-                    cout<<it.coor[1]<<endl; 
                     if (wf>it.coor[0])wf=it.coor[0];
                     if (wfmax<it.coor[0])wfmax =it.coor[0];
                     if (df>it.coor[1])df=it.coor[1];
                     if (dfmax<it.coor[1])dfmax=it.coor[1];
                 }
-                cout<<wf<<" "<<wfmax<<" "<<df<< " "<<dfmax<<endl;
                 wf = wfmax-wf;
                 df = dfmax-df;
                 break;
@@ -292,8 +268,6 @@ public:
                 }
                 wf = wfmax-wf;
                 df = dfmax-df;
-                //wf = abs(pts[2].coor[1] - pts[1].coor[1]);
-                //df = abs(pts[1].coor[2] - pts[0].coor[2]);
                 break;
             };
             case 2: {
@@ -305,23 +279,15 @@ public:
                 }
                 wf = wfmax-wf;
                 df = dfmax-df;
-                //wf = abs(pts[2].coor[0] - pts[1].coor[0]);     // TODO  
-                //df = abs(pts[2].coor[2] - pts[1].coor[2]); 
                 break;
             }
         }
-        //int wf = pts[2].coor[1]-pts[1].coor[1]; //ceil(w*1.0/cos(angle2));
-        //int df = pts[1].coor[2]- pts[0].coor[2]; //ceil(d*1.0/sin(angle1));
-
-        cout << wf << ' ' << df << '\n';
-
         CImg<unsigned char> ans(wf,df,1,1,0);
 
 
         file.seekg(0,ios::end);
         int pos = int(file.tellg()) - int(sizeof(pixel_des));
         get_cut(pl, pos, ans,reflect);
-        cout<<"reflect is: "<<reflect<<endl; 
         return ans;
     }
 
