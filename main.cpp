@@ -41,10 +41,24 @@ CImg<unsigned char> load_3d(){
     return R;
 }
 
+void tester(Octree& oct, CImg<unsigned char> &R){
+    double ang1, ang2;
+    for(int i = 0 ; i < 20; i++){   
+        ang1 = (rand()%3000)/1000;
+        ang2 = (rand()%3000)/1000;
+        CImg<unsigned char> RR = oct.Get_Cut(R.width(), R.height(), R.depth(),  ang1,ang2);         
+        //RR.display();
+        string filename = "testImg/" +  to_string(i);
+        
+        filename += ".jpg"; 
+        RR.save(filename.c_str()); 
+    }
+}
+
 
 int main(){
-   
-    //srand(time(NULL));   
+    
+    srand(time(NULL));   
     //A.save("in.jpg");
     //CImg<float> B = A.crop(0, 0, 3, 3); 
     /*CImg<float> A("datos cerebros/paciente 1/1/Paciente1CC-27-10-1988- CT from 18-01-2011 S0 I0.BMP");
@@ -53,12 +67,14 @@ int main(){
     R.display();
     R.save("out.png");*/
     CImg<unsigned char> R = load_3d();
+    cout << sizeof(R) << endl;
     R.display();
     //insert(R, "data.txt");
 
     Octree oct("data.txt");
-    CImg<unsigned char> RR = oct.Get_Cut(R.width(), R.height(), R.depth(),  1,0.3);         
-    RR.display();
+    tester(oct,R);
+    /*CImg<unsigned char> RR = oct.Get_Cut(R.width(), R.height(), R.depth(),  1,0.3);         
+    RR.display(); */
 
     /*CImg<unsigned char> RR = reconstruir(R.width(), R.height(), R.depth(), "data.txt");
     RR.display();*/
