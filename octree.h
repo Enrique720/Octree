@@ -153,7 +153,6 @@ public:
         for( auto it: points){
             cout<<it.coor[0]<<" "<<it.coor[1]<<" "<<it.coor[2]<<" "<<endl;
         }
-        if(points.size()!=4)return;
         int distXmin,distZmin,distYmin;
         distXmin=distZmin=distYmin=1000;
         int distXmax=0,distYmax=0,distZmax=0;
@@ -165,34 +164,23 @@ public:
             distYmax = max(distYmax,int(it.coor[1]));
             distZmax = max(distZmax,int(it.coor[2]));
         }
-        cout<<distXmin<<" "<<distYmin<<" "<<distZmin<<endl;
-
-        
-        cout<<"hola"<<endl;
         int distX = (abs(distXmax-distXmin));
-        cout<<"DISTX"<<distX<<endl;
         int distY = (abs(distYmax-distYmin));        
-        cout<<"DISTY"<<distY<<endl;
         int distZ = (abs(distZmax-distZmin));   
-        cout<<"DISTZ"<<distZ<<endl;
      
         switch(reflect){
             case 0: {  //XY
                 for(int i=0;i<distX;i++){
                     for(int j=0;j<distY;j++){
-                        cout<<"nani"<<endl;
-                        ans(distYmin+j,distXmin+i)=255; 
-                        //ans(j,i) = R(temp.coor[0],temp.coor[1],temp.coor[2]);
+                        ans(distXmin+i,distYmin+j)=255; 
                     }
                 }    
                 break;                           
             };
             case 1:{   //YZ
-                cout<<"llego1"<<endl;
                 for(int i=0;i<distY;i++){
                     for(int j=0;j<min(distZ,39-distZmin);j++){
                         ans(distYmin+i,distZmin+j)=255; 
-                        //ans(j,i) = R(temp.coor[0],temp.coor[1],temp.coor[2]);
                     }
                 }
                 break; 
@@ -201,7 +189,6 @@ public:
                 for(int i=0;i<distX;i++){
                     for(int j=0;j<min(distZ,39-distZmin);j++){
                         ans(distXmin+i,distZmin+j )=255; 
-                        //ans(j,i) = R(temp.coor[0],temp.coor[1],temp.coor[2]);
                     }
                 }
                 break; 
