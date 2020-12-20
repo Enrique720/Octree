@@ -135,8 +135,6 @@ class Octree{
     pixel_des root;
     string filename;
     ifstream file;
-    CImg <unsigned char> R;
-    CImg <unsigned char> FinalImg;
 public:
 
     Octree(string _filename): filename(_filename) {
@@ -198,13 +196,9 @@ public:
     }
     
     void get_cut(plano &input, uint64_t pos, CImg<unsigned char> &ans,int &reflect){   
-        // load nodo
         pixel_des temp;
-        // ifstream file(filename);
         file.seekg(pos);
         file.read((char*)&temp,sizeof(pixel_des));
-        //cout << "Punto inicial: " << temp.pi.coor[0] << ' ' << temp.pi.coor[1] << ' ' << temp.pi.coor[2] << '\n';
-        //cout << "Punto final: " << temp.pf.coor[0] << ' ' << temp.pf.coor[1] << ' ' << temp.pf.coor[2] << '\n';
         if(intersect(input, temp)){
             //cout << "Leaf: " << temp.isLeaf << '\n';
             if(temp.isLeaf){
@@ -227,12 +221,14 @@ public:
 //a,b,c,d 
 
     CImg<unsigned char> Get_Cut(double w, double h, double d, double angle1, double angle2){
+        //obtenemos los puntos y el plano que intersectan con el poliedro
         point p1 = {w/2, h/2, d/2};
         point p2 = {w/2 + cos(PI + angle1), h/2, d/2 + sin(PI + angle1)};
         point p3 = {w/2, h/2 + cos(PI + angle2), d/2 + sin(PI + angle2)};
         plano pl = getPlano(p1, p2, p3);
 
         auto pts = getPoints({{0,0,0},{h,w,d}},pl);
+        //se obtiene el plano por el cual vamos a hacer la reflexion.
         double umbral = d/w *PI/4;
         int reflect=1;
         if(angle1<=umbral && angle2<=umbral ){
@@ -247,6 +243,7 @@ public:
             reflect=2;
         }
         int wf=1000,df=1000,wfmax=0,dfmax=0;
+        //se crea la imagen con respecto a la reflexion
         switch (reflect){
             case 0:{
                 for(auto it:pts){
@@ -283,6 +280,7 @@ public:
             }
         }
         CImg<unsigned char> ans(wf,df,1,1,0);
+        //se llama a la funcion que realiza todo el pintado de la nueva imagen
 
 
         file.seekg(0,ios::end);
