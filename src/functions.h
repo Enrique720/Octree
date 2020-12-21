@@ -18,15 +18,14 @@ CImg<unsigned char> Binarizar(CImg<float> &img, int umbral) {
     return R;
 }
 
-CImg<unsigned char> load_3d() {
+CImg<unsigned char> load_3d(string file) {
     int x = 512, y = 512, z = 40;
     CImg<unsigned char> R(x, y, z, 1);
-    ifstream db("db.txt");
+    ifstream db(file);
     string filename;
     for (int k = 0; k < R.depth(); k++) {
         getline(db, filename);
-        string temp = "datos cerebros/paciente 1/1/" + filename;
-        CImg<float> tmp(temp.c_str());
+        CImg<float> tmp(filename.c_str());
         CImg<unsigned char> img = Binarizar(tmp, 122);
         for (int i = 0; i < R.height(); i++) {
             for (int j = 0; j < R.width(); j++) {
