@@ -1,122 +1,10 @@
 #ifndef QUADTREE_QUADTREE_H
 #define QUADTREE_QUADTREE_H
-#define INF 10000000
-#define PI 3.14159265
-
+#include "plano.h"
+#include "point.h"
 #include "functions.h"
-#include <bits/stdc++.h>
 
 using namespace cimg_library;
-
-struct plano {
-    double a, b, c, d;
-};
-
-double getX(plano input, point point) {
-    if (input.a == 0)return INF;
-    return -(input.b * point.coor[1] + input.c * point.coor[2] + input.d) / input.a;
-}
-
-double getY(plano input, point point) {
-    if (input.b == 0)return INF;
-    return -(input.a * point.coor[0] + input.c * point.coor[2] + input.d) / input.b;
-}
-
-double getZ(plano input, point point) {
-    if (input.c == 0)return INF;
-    return -(input.b * point.coor[1] + input.a * point.coor[0] + input.d) / input.c;
-}
-
-bool intersect(plano input, pixel_des quad) {
-    point initial = {quad.pi.coor[0], quad.pi.coor[1], quad.pi.coor[2]};
-    point end = {quad.pf.coor[0], quad.pf.coor[1], quad.pf.coor[2]};
-    if ((input.c == 0 || (getZ(input, initial) >= quad.pi.coor[2]) && (getZ(input, end) <= quad.pf.coor[2]) ||
-         (getZ(input, initial) <= quad.pf.coor[2]) && (getZ(input, end) >= quad.pi.coor[2])) &&
-        (input.b == 0 || (getY(input, initial) >= quad.pi.coor[1]) && (getY(input, end) <= quad.pf.coor[1]) ||
-         (getY(input, initial) <= quad.pf.coor[1]) && (getY(input, end) >= quad.pi.coor[1])) &&
-        (input.a == 0 || (getX(input, initial) >= quad.pi.coor[0]) && (getX(input, end) <= quad.pf.coor[0]) ||
-         (getX(input, initial) <= quad.pf.coor[0]) && (getX(input, end) >= quad.pi.coor[0]))) {
-        return true;
-    }
-    return false;
-}
-
-plano getPlano(point p1, point p2, point p3) {
-    plano pl;
-
-    point v1 = p2 - p1;
-    point v2 = p3 - p1;
-    point cross = v1 * v2;
-    point norm = cross.norm();
-
-    pl.a = norm.coor[0];
-    pl.b = norm.coor[1];
-    pl.c = norm.coor[2];
-    pl.d = -(norm.coor[0] * p1.coor[0] + norm.coor[1] * p1.coor[1] + norm.coor[2] * p1.coor[2]);
-
-    return pl;
-}
-
-vector <point> getPoints(pixel_des pd, plano pl) {
-    vector <point> pts;
-
-    double nx, ny, nz;
-    /* Aristas en X*/
-    if (getX(pl, {0, pd.pi.coor[1], pd.pi.coor[2]}) != INF) {
-        nx = (-pl.d - pl.b * pd.pi.coor[1] - pl.c * pd.pi.coor[2]) / pl.a;
-        if (nx >= pd.pi.coor[0] && nx <= pd.pf.coor[0]) pts.push_back({nx, pd.pi.coor[1], pd.pi.coor[2]});
-    }
-    if (getX(pl, {0, pd.pi.coor[1], pd.pf.coor[2]}) != INF) {
-        nx = (-pl.d - pl.b * pd.pi.coor[1] - pl.c * pd.pf.coor[2]) / pl.a;
-        if (nx >= pd.pi.coor[0] && nx <= pd.pf.coor[0]) pts.push_back({nx, pd.pi.coor[1], pd.pf.coor[2]});
-    }
-    if (getX(pl, {0, pd.pf.coor[1], pd.pi.coor[2]}) != INF) {
-        nx = (-pl.d - pl.b * pd.pf.coor[1] - pl.c * pd.pi.coor[2]) / pl.a;
-        if (nx >= pd.pi.coor[0] && nx <= pd.pf.coor[0]) pts.push_back({nx, pd.pf.coor[1], pd.pi.coor[2]});
-    }
-    if (getX(pl, {0, pd.pf.coor[1], pd.pf.coor[2]}) != INF) {
-        nx = (-pl.d - pl.b * pd.pf.coor[1] - pl.c * pd.pf.coor[2]) / pl.a;
-        if (nx >= pd.pi.coor[0] && nx <= pd.pf.coor[0]) pts.push_back({nx, pd.pf.coor[1], pd.pf.coor[2]});
-    }
-
-    /* Aristas en Y */
-    if (getY(pl, {pd.pi.coor[0], 0, pd.pi.coor[2]}) != INF) {
-        ny = (-pl.d - pl.a * pd.pi.coor[0] - pl.c * pd.pi.coor[2]) / pl.b;
-        if (ny >= pd.pi.coor[1] && ny <= pd.pf.coor[1]) pts.push_back({pd.pi.coor[0], ny, pd.pi.coor[2]});
-    }
-    if (getY(pl, {pd.pi.coor[0], 0, pd.pf.coor[2]}) != INF) {
-        ny = (-pl.d - pl.a * pd.pi.coor[0] - pl.c * pd.pf.coor[2]) / pl.b;
-        if (ny >= pd.pi.coor[1] && ny <= pd.pf.coor[1]) pts.push_back({pd.pi.coor[0], ny, pd.pf.coor[2]});
-    }
-    if (getY(pl, {pd.pf.coor[0], 0, pd.pi.coor[2]}) != INF) {
-        ny = (-pl.d - pl.a * pd.pf.coor[0] - pl.c * pd.pi.coor[2]) / pl.b;
-        if (ny >= pd.pi.coor[1] && ny <= pd.pf.coor[1]) pts.push_back({pd.pf.coor[0], ny, pd.pi.coor[2]});
-    }
-    if (getY(pl, {pd.pf.coor[0], 0, pd.pf.coor[2]}) != INF) {
-        ny = (-pl.d - pl.a * pd.pf.coor[0] - pl.c * pd.pf.coor[2]) / pl.b;
-        if (ny >= pd.pi.coor[1] && ny <= pd.pf.coor[1]) pts.push_back({pd.pf.coor[0], ny, pd.pf.coor[2]});
-    }
-
-    /* Aristas en Z */
-    if (getZ(pl, {pd.pi.coor[0], pd.pi.coor[1], 0}) != INF) {
-        nz = (-pl.d - pl.a * pd.pi.coor[0] - pl.b * pd.pi.coor[1]) / pl.c;
-        if (nz >= pd.pi.coor[2] && nz <= pd.pf.coor[2]) pts.push_back({pd.pi.coor[0], pd.pi.coor[1], nz});
-    }
-    if (getZ(pl, {pd.pi.coor[0], pd.pf.coor[1], 0}) != INF) {
-        nz = (-pl.d - pl.a * pd.pi.coor[0] - pl.b * pd.pf.coor[1]) / pl.c;
-        if (nz >= pd.pi.coor[2] && nz <= pd.pf.coor[2]) pts.push_back({pd.pi.coor[0], pd.pf.coor[1], nz});
-    }
-    if (getZ(pl, {pd.pf.coor[0], pd.pi.coor[1], 0}) != INF) {
-        nz = (-pl.d - pl.a * pd.pf.coor[0] - pl.b * pd.pi.coor[1]) / pl.c;
-        if (nz >= pd.pi.coor[2] && nz <= pd.pf.coor[2]) pts.push_back({pd.pf.coor[0], pd.pi.coor[1], nz});
-    }
-    if (getZ(pl, {pd.pf.coor[0], pd.pf.coor[1], 0}) != INF) {
-        nz = (-pl.d - pl.a * pd.pf.coor[0] - pl.b * pd.pf.coor[1]) / pl.c;
-        if (nz >= pd.pi.coor[2] && nz <= pd.pf.coor[2]) pts.push_back({pd.pf.coor[0], pd.pf.coor[1], nz});
-    }
-
-    return pts;
-}
 
 
 class Octree {
@@ -340,10 +228,7 @@ Get_Cut(double w, double h, double d, double angle1, double angle2, CImg<unsigne
         case 0: {  
             for (int i = 0; i < distX; i++) {
                 for (int j = 0; j < distY; j++) {
-                    cout << distXmin + i << "  " << distYmin + j << endl;
-                    cout << int(getZ(pl, {distXmin + i, distZmin + j, 0})) << endl;
                     InitImage(distXmin + i, distYmin + j, ceil(getZ(pl, {distXmin + i, distYmin + j, 0})));
-                    cout << "hola" << endl;
                     ans(distXmin + i, distYmin + j) = InitImage(distXmin + i, distYmin + j,
                                                                 ceil(getZ(pl, {distXmin + i, distYmin + j, 0})));
                 }
@@ -374,5 +259,68 @@ Get_Cut(double w, double h, double d, double angle1, double angle2, CImg<unsigne
 
 
 }
+
+int64_t insert(point pi, point pf, CImg<unsigned char> &image, ofstream &output_file) {
+    int color = image(pi.coor[1], pi.coor[0], pi.coor[2]);
+    bool unique = isColorUnique(pi, pf, color, image);
+    pixel_des pd = {pi, pf, false};
+    if (unique) {
+        if (color == 255) {
+            output_file.seekp(0, ios::end);
+            int64_t size = output_file.tellp();
+            pd.isLeaf = true;
+            output_file.write((char *) &pd, sizeof(pixel_des));
+            return size;
+        }
+    } else {
+        int xi = pi.coor[0];
+        int yi = pi.coor[1];
+        int zi = pi.coor[2];
+        int xf = pf.coor[0];
+        int yf = pf.coor[1];
+        int zf = pf.coor[2];
+        int mx = (xf + xi) / 2;
+        int my = (yf + yi) / 2;
+        int mz = (zf + zi) / 2;
+        if (xi != mx && yi != my && zi != mz) pd.children[0] = insert({xi, yi, zi}, {mx, my, mz}, image, output_file);
+        if (xi != mx && yi != my && mz != zf) pd.children[1] = insert({xi, yi, mz}, {mx, my, zf}, image, output_file);
+        if (xi != mx && my != yf && zi != mz) pd.children[2] = insert({xi, my, zi}, {mx, yf, mz}, image, output_file);
+        if (xi != mx && my != yf && mz != zf) pd.children[3] = insert({xi, my, mz}, {mx, yf, zf}, image, output_file);
+        if (mx != xf && yi != my && zi != mz) pd.children[4] = insert({mx, yi, zi}, {xf, my, mz}, image, output_file);
+        if (mx != xf && yi != my && mz != zf) pd.children[5] = insert({mx, yi, mz}, {xf, my, zf}, image, output_file);
+        if (mx != xf && my != yf && zi != mz) pd.children[6] = insert({mx, my, zi}, {xf, yf, mz}, image, output_file);
+        if (mx != xf && my != yf && mz != zf) pd.children[7] = insert({mx, my, mz}, {xf, yf, zf}, image, output_file);
+        output_file.seekp(0, ios::end);
+        int64_t size = output_file.tellp();
+        output_file.write((char *) &pd, sizeof(pixel_des));
+        return size;
+    }
+    return -1;
+}
+
+void insert(CImg<unsigned char> &image, string filename) {
+    int w = image.width();
+    int h = image.height();
+    int d = image.depth();
+    ofstream output_file(filename, ios::binary | ios::trunc);
+    insert({0, 0, 0}, {h, w, d}, image, output_file);
+}
+
+CImg<unsigned char> reconstruir(int w, int h, int d, string filename) {
+    ifstream input_file(filename, ios::binary);
+    pixel_des pd;
+    CImg<unsigned char> R(w, h, d, 1, 0);
+    while (input_file.read((char *) &pd, sizeof(pixel_des))) {
+        for (int i = pd.pi.coor[0]; i < pd.pf.coor[0]; i++) {
+            for (int j = pd.pi.coor[1]; j < pd.pf.coor[1]; j++) {
+                for (int k = pd.pi.coor[2]; k < pd.pf.coor[2]; k++) {
+                    R(j, i, k) = 255;
+                }
+            }
+        }
+    }
+    return R;
+}
+
 
 #endif //QUADTREE_QUADTREE_H
