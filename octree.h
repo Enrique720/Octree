@@ -390,8 +390,8 @@ CImg<unsigned char> Get_Cut(double w, double h, double d, double angle1, double 
                 break; 
             }
         }
-        ans.display();
-        cout<<reflect<<endl;
+        //ans.display();
+        //cout<<reflect<<endl;
         return ans;
 
         
