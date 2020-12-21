@@ -6,7 +6,7 @@ int main() {
     srand(time(NULL));
     CImg<unsigned char> R = load_3d();
     cout << sizeof(R) << endl;
-    R.display();
+    //R.display();
     /* insert(R, "data.txt"); */  //Descomentar para cargar el Octree en disco 
     Octree oct("data.txt");
     tester(oct, R);
