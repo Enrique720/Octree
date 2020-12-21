@@ -34,5 +34,3 @@ datos cerebros/paciente 2/3/Paciente2_3-03-10-1991- CT from 01-11-2010 S1 I32.BM
 datos cerebros/paciente 2/3/Paciente2_3-03-10-1991- CT from 01-11-2010 S1 I33.BMP
 datos cerebros/paciente 2/3/Paciente2_3-03-10-1991- CT from 01-11-2010 S1 I34.BMP
 datos cerebros/paciente 2/3/Paciente2_3-03-10-1991- CT from 01-11-2010 S1 I35.BMP
-
-

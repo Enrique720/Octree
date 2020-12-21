@@ -28,4 +28,3 @@ datos cerebros/paciente 4/7/Paciente4_7-18-01-1989- CT from 31-07-2010 S1 I32.BM
 datos cerebros/paciente 4/7/Paciente4_7-18-01-1989- CT from 31-07-2010 S1 I33.BMP
 datos cerebros/paciente 4/7/Paciente4_7-18-01-1989- CT from 31-07-2010 S1 I34.BMP
 datos cerebros/paciente 4/7/Paciente4_7-18-01-1989- CT from 31-07-2010 S1 I35.BMP
-

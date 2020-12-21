@@ -1,11 +1,15 @@
 #include "octree.h"
 
-void tester(Octree &oct, CImg<unsigned char> &R) {
+void tester(string file) {
+    CImg<unsigned char> R = load_3d(file);
+    //system("rm data.txt");
+    insert(R, "data.txt");
+    Octree oct("data.txt");
+    
     clock_t time1, time2;
     double ang1, ang2;
     cout << "Tiempo Octree  & Tiempo Cubo " << endl;
     for (int i = 0; i < 20; i++) {
-        
         ang1 = (rand() % 3000) / 1000;
         ang2 = (rand() % 3000) / 1000;
         

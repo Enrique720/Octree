@@ -19,12 +19,20 @@ CImg<unsigned char> Binarizar(CImg<float> &img, int umbral) {
 }
 
 CImg<unsigned char> load_3d(string file) {
-    int x = 512, y = 512, z = 40;
-    CImg<unsigned char> R(x, y, z, 1);
     ifstream db(file);
-    string filename;
-    for (int k = 0; k < R.depth(); k++) {
-        getline(db, filename);
+    int cont = 0;
+    string files;
+    vector <string> filenames;   
+    while(!db.eof()){
+        getline(db, files);
+        filenames.push_back(files);
+        cont++;
+    }
+
+    int x = 512, y = 512, z = cont;
+    CImg<unsigned char> R(x, y, z, 1);
+    int k = 0;
+    for(auto filename:filenames) {
         CImg<float> tmp(filename.c_str());
         CImg<unsigned char> img = Binarizar(tmp, 122);
         for (int i = 0; i < R.height(); i++) {
@@ -32,6 +40,7 @@ CImg<unsigned char> load_3d(string file) {
                 R(i, j, k) = img(i, j);
             }
         }
+        k++;
     }
     return R;
 }
@@ -58,5 +67,5 @@ double cmpImg(CImg<unsigned char> &img1, CImg<unsigned char> &img2){
             if(img1(j,i) == img2(j,i)) cnt++;
         }
     }
-    return cnt/(w1*h1);
+    return (cnt/(w1*h1))*100;
 }
