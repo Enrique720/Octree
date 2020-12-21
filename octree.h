@@ -18,6 +18,8 @@ double getX(plano input,point point){
     if(input.a==0)return INF;
     return -(input.b*point.coor[1]+input.c*point.coor[2]+input.d)/input.a;
 }
+//-0.283404 -0.283404 0.916168 126.78
+//449,0   (x,z)
 
 double getY(plano input,point point){
     if( input.b==0)return INF;
@@ -244,45 +246,43 @@ public:
         }
         int wf=1000,df=1000,wfmax=0,dfmax=0;
         //se crea la imagen con respecto a la reflexion
+        auto points = getPoints({{0,0,0},{h,w,d}},pl);
+        int distXmin,distZmin,distYmin;
+        distXmin=distZmin=distYmin=1000;
+        int distXmax=0,distYmax=0,distZmax=0;
+        for(auto it:points){
+            cout<<"point:"<<it.coor[0]<<" "<<it.coor[1]<<" "<<it.coor[2]<<endl;
+            distXmin=min(distXmin,int(it.coor[0]));
+            distYmin=min(distYmin,int(it.coor[1]));
+            distZmin=min(distZmin,int( it.coor[2]));
+            distXmax = max(distXmax,int(it.coor[0]));
+            distYmax = max(distYmax,int(it.coor[1]));
+            distZmax = max(distZmax,int(it.coor[2]));
+        }
+        int distX = (abs(distXmax-distXmin));
+        int distY = (abs(distYmax-distYmin));        
+        int distZ = (abs(distZmax-distZmin));   
+        
         switch (reflect){
             case 0:{
-                for(auto it:pts){
-                    if (wf>it.coor[0])wf=it.coor[0];
-                    if (wfmax<it.coor[0])wfmax =it.coor[0];
-                    if (df>it.coor[1])df=it.coor[1];
-                    if (dfmax<it.coor[1])dfmax=it.coor[1];
-                }
-                wf = wfmax-wf;
-                df = dfmax-df;
+                wf = distX;
+                df = distY;
                 break;
             };
             case 1: {
-                for(auto it:pts){
-                    if (wf>it.coor[1])wf=it.coor[1];
-                    if (wfmax<it.coor[1])wfmax =it.coor[1];
-                    if (df>it.coor[2])df=it.coor[2];
-                    if (dfmax<it.coor[2])dfmax=it.coor[2];
-                }
-                wf = wfmax-wf;
-                df = dfmax-df;
+                wf = distY;
+                df = distZ;
                 break;
             };
             case 2: {
-                for(auto it:pts){
-                    if (wf>it.coor[0])wf=it.coor[0];
-                    if (wfmax<it.coor[0])wfmax =it.coor[0];
-                    if (df>it.coor[2])df=it.coor[2];
-                    if (dfmax<it.coor[2])dfmax=it.coor[2];
-                }
-                wf = wfmax-wf;
-                df = dfmax-df;
+
+                wf = distX;
+                df = distZ;
                 break;
             }
         }
         CImg<unsigned char> ans(wf,df,1,1,0);
         //se llama a la funcion que realiza todo el pintado de la nueva imagen
-
-
         file.seekg(0,ios::end);
         int pos = int(file.tellg()) - int(sizeof(pixel_des));
         get_cut(pl, pos, ans,reflect);
@@ -291,6 +291,110 @@ public:
 
 };
 
+CImg<unsigned char> Get_Cut(double w, double h, double d, double angle1, double angle2,CImg<unsigned char> &InitImage){
+        point p1 = {w/2, h/2, d/2};
+        point p2 = {w/2 + cos(PI + angle1), h/2, d/2 + sin(PI + angle1)};
+        point p3 = {w/2, h/2 + cos(PI + angle2), d/2 + sin(PI + angle2)};
+        plano pl = getPlano(p1, p2, p3);
 
+        auto pts = getPoints({{0,0,0},{h,w,d}},pl);
+        //se obtiene el plano por el cual vamos a hacer la reflexion.
+        double umbral = d/w *PI/4;
+        int reflect=1;
+        if(angle1<=umbral && angle2<=umbral ){
+            reflect=0;
+        }else if(angle1>umbral && angle2< umbral) {
+            reflect=1; 
+        }else if(angle1<umbral && angle2>umbral) {
+            reflect=2;
+        }else if(angle1>angle2){
+            reflect=1;
+        }else{
+            reflect=2;
+        }
+        int wf=1000,df=1000,wfmax=0,dfmax=0;
+        //se crea la imagen con respecto a la reflexion
+        auto points = getPoints({{0,0,0},{h,w,d}},pl);
+        int distXmin,distZmin,distYmin;
+        distXmin=distZmin=distYmin=1000;
+        int distXmax=0,distYmax=0,distZmax=0;
+        for(auto it:points){
+            cout<<"point:"<<it.coor[0]<<" "<<it.coor[1]<<" "<<it.coor[2]<<endl;
+            distXmin=min(distXmin,int(ceil(it.coor[0])));
+            distYmin=min(distYmin,int(ceil(it.coor[1])));
+            distZmin=min(distZmin,int(ceil( it.coor[2])));
+            distXmax = max(distXmax,int(ceil(it.coor[0])));
+            distYmax = max(distYmax,int(ceil(it.coor[1])));
+            distZmax = max(distZmax,int(ceil(it.coor[2])));
+        }
+        int distX = (abs(distXmax-distXmin));
+        int distY = (abs(distYmax-distYmin));        
+        int distZ = (abs(distZmax-distZmin));   
+        
+        switch (reflect){
+            case 0:{
+                wf = distX;
+                df = distY;
+                break;
+            };
+            case 1: {
+                wf = distY;
+                df = distZ;
+                break;
+            };
+            case 2: {
+
+                wf = distX;
+                df = distZ;
+                break;
+            }
+        }
+        cout<<" --------"<<endl;
+        cout<<wf<<" "<<df<<endl; 
+        CImg<unsigned char> ans(wf,df,1,1,0);
+        cout<<reflect<<endl;
+        cout<<"plano es: "<< pl.a<<" "<<pl.b <<" "<<pl.c<<" "<<pl.d<<endl;
+        switch(reflect){
+            case 0: {  //XY
+                for(int i=0;i<distX;i++){
+                    for(int j=0;j<distY;j++){
+                        cout<<distXmin+i<<"  "<<distYmin+j<<endl;
+                        cout<<int(getZ(pl,{distXmin+i,distZmin+j,0}))<<endl;
+                        InitImage(distXmin+i,distYmin+j,ceil(getZ(pl,{distXmin+i,distYmin+j,0})));
+                        cout<<"hola"<<endl;
+                        ans(distXmin+i,distYmin+j)=InitImage(distXmin+i,distYmin+j,ceil(getZ(pl,{distXmin+i,distYmin+j,0}))); 
+                    }
+                }    
+                break;                           
+            };
+            case 1:{   //YZ
+                for(int i=0;i<distY;i++){
+                    for(int j=0;j<min(distZ,39-distZmin);j++){
+                        ans(distYmin+i,distZmin+j)=InitImage(ceil(getX(pl,{0,distYmin+i,distZmin+j})),distYmin+i,distZmin+j); 
+                    }
+                }
+                break; 
+            };
+            case 2:{   //XZ 
+                for(int i=0;i<distX;i++){
+                    for(int j=0;j<min(distZ,39-distZmin);j++){
+                        //cout<<distXmin+i<<"  "<<distZmin+j<<endl;
+                        //cout<<int(getY(pl,{distXmin+i,0,distZmin+j}))<<endl;
+                        int y =max(0, int(ceil(getY(pl,{distXmin+i,0,distZmin+j}))));
+                        
+                        //ans(distXmin+i,distZmin+j )=InitImage(distXmin+i,ceil(getY(pl,{distXmin+i,0,distZmin+j})),distZmin+j); 
+                        ans(distXmin+i,distZmin+j )=InitImage(distXmin+i,y,distZmin+j); 
+
+                    }//449 0 
+                }
+                break; 
+            }
+        }
+        ans.display();
+        cout<<reflect<<endl;
+        return ans;
+
+        
+}
 
 #endif //QUADTREE_QUADTREE_H
