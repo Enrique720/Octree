@@ -159,6 +159,32 @@ public:
         return ans;
     }
 
+    int bfs(int pos,int height){
+        priority_queue<pair<int,int>> q;
+        q.push({0,pos});
+        while(!q.empty()){
+            auto temp = q.top();
+            q.pop();
+            file.seekg(temp.second,ios::beg);
+            file.read((char*)&root,sizeof(pixel_des));
+            for(int i=0;i<8;i++){
+                if(root.children[i]!=-1)
+                    q.push({temp.first-1,root.children[i]});
+                    if(-(temp.first-1)>height)height= -(temp.first-1);
+            }
+        }
+        return height;
+    }
+
+    int getRam(){
+        int height=0;
+        file.seekg(0, ios::end);
+        int pos = int(file.tellg()) - int(sizeof(pixel_des));
+        return bfs(pos,height);
+    }
+
+
+
 };
 
 CImg<unsigned char>

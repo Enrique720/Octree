@@ -27,4 +27,5 @@ void tester(Octree &oct, CImg<unsigned char> &R) {
         string filename2 = "testImgR/" + to_string(i) + ".jpg";
         //RR2.save(filename2.c_str());
     }
+    cout<<"memoria utilizada por el Octree: "<<oct.getRam()*sizeof(pixel_des)<<" bytes"<< endl;
 }
