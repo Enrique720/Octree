@@ -48,3 +48,16 @@ bool isColorUnique(point pi, point pf, int color, CImg<unsigned char> &image) {
     }
     return true;
 }
+
+double cmpImg(CImg<unsigned char> &img1, CImg<unsigned char> &img2){
+    int w1 = img1.width(), h1 = img1.height();
+    int w2 = img2.width(), h2 = img2.height();
+    if(w1!=w2 || h1!=h2) return INF;
+    double cnt = 0;
+    for(int i=0; i<w1; i++){
+        for(int j=0; j<h1; j++){
+            if(img1(j,i) == img2(j,i)) cnt++;
+        }
+    }
+    return cnt/(w1*h1);
+}

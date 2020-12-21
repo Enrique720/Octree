@@ -20,6 +20,8 @@ void tester(Octree &oct, CImg<unsigned char> &R) {
         CImg<unsigned char> RR2 = Get_Cut(R.width(), R.height(), R.depth(), ang1, ang2, R);
         time2 = clock();
 
+        cout << "Similitud: " << cmpImg(RR,RR2) << '\n';
+
         cout << "Tiempo Cubo: " << double(time2-time1)/CLOCKS_PER_SEC << endl;
         string filename2 = "testImgR/" + to_string(i) + ".jpg";
         RR2.save(filename2.c_str());
