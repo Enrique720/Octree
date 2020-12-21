@@ -41,4 +41,3 @@ datos cerebros/paciente 3/5/Paciente3_5-10-08-1995- CT from 24-11-2010 S1 I39.BM
 datos cerebros/paciente 3/5/Paciente3_5-10-08-1995- CT from 24-11-2010 S1 I40.BMP
 datos cerebros/paciente 3/5/Paciente3_5-10-08-1995- CT from 24-11-2010 S1 I41.BMP
 datos cerebros/paciente 3/5/Paciente3_5-10-08-1995- CT from 24-11-2010 S1 I42.BMP
-

@@ -36,4 +36,3 @@ datos cerebros/paciente 5/14/Paciente7_14-04-04-1988- CT from 18-01-2011 S0 I34.
 datos cerebros/paciente 5/14/Paciente7_14-04-04-1988- CT from 18-01-2011 S0 I35.BMP
 datos cerebros/paciente 5/14/Paciente7_14-04-04-1988- CT from 18-01-2011 S0 I36.BMP
 datos cerebros/paciente 5/14/Paciente7_14-04-04-1988- CT from 18-01-2011 S0 I37.BMP
-

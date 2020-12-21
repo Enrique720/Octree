@@ -2,14 +2,12 @@
 #include "src/tester.h"
 
 int main() {
-
+    
     srand(time(NULL));
-    CImg<unsigned char> R = load_3d("paths/p1.txt");
-    cout << sizeof(R) << endl;
-    //R.display();
-    insert(R, "data.txt");   //Descomentar para cargar el Octree en disco 
-    Octree oct("data.txt");
-    tester(oct, R);
+
+    vector<string> files = {"paths/p1.txt","paths/p2.txt","paths/p3.txt","paths/p4.txt","paths/p5.txt"};
+    for(auto file:files)
+        tester(file);
 
     return 0;
 }
