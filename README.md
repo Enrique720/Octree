@@ -16,5 +16,4 @@
 - tester.h: contiene el test con 20 cortes aleatorios. Genera los cortes en las carpetas testImgR y testImg, donde la primera contiene los cortes utilizando el cubo, mientras que en la segunda, con el octree
 
 ## Ejecucion del programa:
-- g++ main.cpp -pthread -lX11 -w
-- ./a.out
+- sh run.sh (generara un archivo output.txt con las estadisticas)
