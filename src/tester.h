@@ -22,6 +22,8 @@ void tester(Octree &oct, CImg<unsigned char> &R) {
         time2 = clock();
 
         cout << double(time2-time1)/CLOCKS_PER_SEC << endl;
+        cout << "Similitud: " << cmpImg(RR,RR2) << '\n';
+
         string filename2 = "testImgR/" + to_string(i) + ".jpg";
         //RR2.save(filename2.c_str());
     }
