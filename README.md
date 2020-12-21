@@ -13,6 +13,7 @@
 - octree.h: contiene la estructura del octree y la funcion get_cut, la cual realiza el recorrido por la estructura, pintando el corte que se va a devolver.
 - point.h: contiene la estructura de un punto y tiene sobrecargado las diferentes funciones y operadores para que pueda ser usado en la ejecucion del proyecto.
 - functions.h: contiene las diferentes funciones para la binarizacion de las imagenes, la creacion de la imagen 3D, la obtencion del corte en base al cubo original y la creacion de la estructura. 
+- tester.h: contiene el test con 20 cortes aleatorios. Genera los cortes en las carpetas testImgR y testImg, donde la primera contiene los cortes utilizando el cubo, mientras que en la segunda, con el octree
 
 ## Ejecucion del programa:
 - g++ main.cpp -pthread -lX11 -w
