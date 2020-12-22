@@ -1,0 +1,210 @@
+Tiempo Octree  & Tiempo Cubo 
+0.147906 & 0.011921
+Similitud: 79.343
+0.02382 & 0.00152
+Similitud: 83.4668
+0.024368 & 0.001186
+Similitud: 83.4668
+0.147958 & 0.010541
+Similitud: 79.343
+0.025004 & 0.001038
+Similitud: 82.627
+0.001234 & 0.002375
+Similitud: 83.8916
+0.001175 & 0.002313
+Similitud: 83.8916
+0.137873 & 0.011739
+Similitud: 79.343
+0.029343 & 0.002029
+Similitud: 69.4775
+0.001001 & 0.00163
+Similitud: 70.7812
+0.022736 & 0.001384
+Similitud: 69.624
+0.034902 & 0.00201
+Similitud: 69.0234
+0.128975 & 0.011715
+Similitud: 79.343
+0.142005 & 0.010785
+Similitud: 79.343
+0.023273 & 0.000618
+Similitud: 70.4443
+0.024988 & 0.001263
+Similitud: 71.2695
+0.023237 & 0.000536
+Similitud: 70.0928
+0.00088 & 0.001528
+Similitud: 70.4346
+0.00123 & 0.002393
+Similitud: 70.4346
+0.023519 & 0.000565
+Similitud: 70.4443
+memoria utilizada por el Octree: 1200 bytes
+Tiempo Octree  & Tiempo Cubo 
+0.031439 & 0.002204
+Similitud: 94.6072
+0.023129 & 0.001474
+Similitud: 95.5295
+0.022141 & 0.001426
+Similitud: 95.5132
+0.129215 & 0.010884
+Similitud: 80.2071
+0.001115 & 0.002426
+Similitud: 86.9249
+0.001244 & 0.001255
+Similitud: 86.9249
+0.026742 & 0.000526
+Similitud: 86.7784
+0.025105 & 0.000499
+Similitud: 86.7784
+0.021982 & 0.00132
+Similitud: 87.028
+0.022567 & 0.001072
+Similitud: 87.028
+0.024477 & 0.000507
+Similitud: 86.7784
+0.020594 & 0.001082
+Similitud: 87.0117
+0.022631 & 0.001457
+Similitud: 87.028
+0.024321 & 0.000531
+Similitud: 86.7784
+0.025069 & 0.000502
+Similitud: 86.7784
+0.030361 & 0.000505
+Similitud: 86.8001
+0.127876 & 0.010776
+Similitud: 80.2071
+0.025819 & 0.000483
+Similitud: 86.7784
+0.129049 & 0.01197
+Similitud: 80.2071
+0.000849 & 0.001267
+Similitud: 86.9249
+memoria utilizada por el Octree: 1200 bytes
+Tiempo Octree  & Tiempo Cubo 
+0.030404 & 0.000548
+Similitud: 91.915
+0.029759 & 0.000529
+Similitud: 92.1421
+0.029287 & 0.002193
+Similitud: 91.9195
+0.027472 & 0.00053
+Similitud: 92.1421
+0.025358 & 0.002394
+Similitud: 92.4827
+0.000788 & 0.001667
+Similitud: 92.7235
+0.022983 & 0.001332
+Similitud: 92.5554
+0.027749 & 0.000535
+Similitud: 91.915
+0.025833 & 0.000554
+Similitud: 92.1421
+0.027677 & 0.002114
+Similitud: 91.9195
+0.027071 & 0.000577
+Similitud: 92.1421
+0.025781 & 0.000533
+Similitud: 92.1421
+0.022771 & 0.001489
+Similitud: 92.4827
+0.053021 & 0.010772
+Similitud: 78.7663
+0.024932 & 0.001889
+Similitud: 86.5643
+0.034474 & 0.001758
+Similitud: 86.0011
+0.03545 & 0.002292
+Similitud: 86.0011
+0.030514 & 0.002008
+Similitud: 86.0011
+0.026565 & 0.000634
+Similitud: 86.2237
+0.022333 & 0.001274
+Similitud: 86.5643
+memoria utilizada por el Octree: 1200 bytes
+Tiempo Octree  & Tiempo Cubo 
+0.019942 & 0.001459
+Similitud: 82.5911
+0.020879 & 0.000525
+Similitud: 82.5911
+0.018989 & 0.000408
+Similitud: 82.5911
+0.021259 & 0.000412
+Similitud: 82.5911
+0.019383 & 0.000471
+Similitud: 82.5911
+0.126519 & 0.01171
+Similitud: 79.121
+0.026561 & 0.000411
+Similitud: 82.513
+0.018134 & 0.000933
+Similitud: 82.513
+0.028563 & 0.001596
+Similitud: 82.0052
+0.024767 & 0.001261
+Similitud: 82.207
+0.016932 & 0.001136
+Similitud: 82.513
+0.000676 & 0.001485
+Similitud: 82.3177
+0.113543 & 0.01091
+Similitud: 79.121
+0.018329 & 0.000895
+Similitud: 82.513
+0.016839 & 0.00114
+Similitud: 82.513
+0.022571 & 0.00166
+Similitud: 82.207
+0.000823 & 0.001288
+Similitud: 82.3177
+0.112657 & 0.010885
+Similitud: 79.121
+0.018764 & 0.000409
+Similitud: 82.513
+0.017999 & 0.001114
+Similitud: 82.513
+memoria utilizada por el Octree: 1200 bytes
+Tiempo Octree  & Tiempo Cubo 
+0.023122 & 0.000541
+Similitud: 88.9751
+0.029217 & 0.001604
+Similitud: 88.9957
+0.028002 & 0.001946
+Similitud: 88.9957
+0.000737 & 0.001336
+Similitud: 89.8386
+0.022549 & 0.001157
+Similitud: 89.6484
+0.02596 & 0.000528
+Similitud: 89.0368
+0.028285 & 0.000941
+Similitud: 89.0368
+0.023335 & 0.001831
+Similitud: 89.6484
+0.033928 & 0.003214
+Similitud: 88.9854
+0.001109 & 0.001371
+Similitud: 89.8386
+0.107439 & 0.011019
+Similitud: 85.9699
+0.000884 & 0.001719
+Similitud: 95.6363
+0.000721 & 0.001855
+Similitud: 95.6363
+0.114677 & 0.012324
+Similitud: 85.9699
+0.021744 & 0.000542
+Similitud: 94.7728
+0.020617 & 0.001134
+Similitud: 95.4256
+0.00073 & 0.001274
+Similitud: 95.6363
+0.020647 & 0.001361
+Similitud: 95.4256
+0.022541 & 0.000517
+Similitud: 94.8345
+0.000659 & 0.001125
+Similitud: 95.6363
+memoria utilizada por el Octree: 1200 bytes
